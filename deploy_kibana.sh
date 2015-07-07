@@ -57,6 +57,7 @@ sudo service nginx restart
 
 # Install Cloudify UI
 cd ..
+rm -rf ~/tmp
 git clone https://github.com/cloudify-cosmo/cloudify-ui.git
 cd cloudify-ui
 git checkout CFY-2938-kibana-poc

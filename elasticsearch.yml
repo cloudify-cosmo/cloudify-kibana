@@ -1,0 +1,13 @@
+##################### Elasticsearch Configuration #####################
+
+
+############################## Network And HTTP ###############################
+
+# Elasticsearch, by default, binds itself to the 0.0.0.0 address, and listens
+# on port [9200-9300] for HTTP traffic and on port [9300-9400] for node-to-node
+# communication. (the range means that if the port is busy, it will automatically
+# try the next port).
+
+# Set both 'bind_host' and 'publish_host':
+#
+network.host: localhost

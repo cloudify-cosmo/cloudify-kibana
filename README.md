@@ -1,2 +1,2 @@
 # cloudify-kibana
-Kibana integration for Cloudify IU
+Kibana integration for Cloudify UI

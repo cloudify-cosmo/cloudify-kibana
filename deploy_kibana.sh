@@ -10,7 +10,7 @@
 # 5. Machine should allow inbound TCP 80 & 5601 ports
 # 6. Git credentials cached
 
-# Fixing Node installation
+# Install Node
 sudo apt-get remove node
 sudo apt-get install -y nodejs
 sudo apt-get update
@@ -32,24 +32,25 @@ sudo service elasticsearch restart
 sudo update-rc.d elasticsearch defaults 95 10
 
 # Import data to Elasticsearch
-npm install -g elasticsearch-tools
+sudo npm install -g elasticsearch-tools
 es-import-bulk --url http://localhost:9200 --file cloudify_events.json
 es-import-bulk --url http://localhost:9200 --file cloudify_storage.json
 es-import-mappings --url http://localhost:9200 --file ~/cloudify_events.mapping
 es-import-mappings --url http://localhost:9200 --file ~/cloudify_storage.mapping
 
 # Install Kibana 4
-cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz
+wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz
 tar xvf kibana-*.tar.gz
-mv kibana.yml ~/kibana-4*/config
+mv kibana.yml ./kibana-4*/config
 sudo mkdir -p /opt/kibana
-sudo cp -R ~/kibana-4*/* /opt/kibana/
+sudo cp -R ./kibana-4*/* /opt/kibana/
 cd /etc/init.d && sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4
 sudo chmod +x /etc/init.d/kibana4
 sudo update-rc.d kibana4 defaults 96 9
 sudo service kibana4 start
 
 # Install Nginx
+cd ~/cloudify-kibana
 sudo apt-get install -y nginx apache2-utils
 sudo mv default /etc/nginx/sites-available
 sudo service nginx restart

@@ -7,6 +7,6 @@ server {
 
         location / {
                 autoindex off;
-                root /home/ubuntu/cloudify_ui/app;
+                root /home/ubuntu/cloudify_ui/dist;
         }
 }

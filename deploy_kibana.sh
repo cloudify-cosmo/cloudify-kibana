@@ -9,6 +9,12 @@
 # 4. Exported cloudify_storage index mapping in cloudify_storage.mapping file, using elasticsearch-tools node module
 # 5. Machine should allow inbound TCP 80 & 5601 ports
 
+# Fixing Node installation
+sudo apt-get remove node
+sudo apt-get install -y nodejs
+sudo apt-get install -y npm
+sudo ln -s /usr/bin/nodejs /usr/sbin/node
+
 # Install Java 8
 sudo add-apt-repository -y ppa:webupd8team/java
 sudo apt-get update
@@ -24,9 +30,6 @@ sudo service elasticsearch restart
 sudo update-rc.d elasticsearch defaults 95 10
 
 # Import data to Elasticsearch
-sudo apt-get remove node
-sudo apt-get install -y nodejs
-sudo ln -s /usr/bin/nodejs /usr/sbin/node
 npm install -g elasticsearch-tools
 es-import-bulk --url http://localhost:9200 --file cloudify_events.json
 es-import-bulk --url http://localhost:9200 --file cloudify_storage.json
@@ -50,5 +53,13 @@ sudo mv default /etc/nginx/sites-available
 sudo service nginx restart
 
 # Install Cloudify UI
+cd ..
 git clone https://github.com/cloudify-cosmo/cloudify-ui.git
+cd cloudify-ui
 git checkout CFY-2938-kibana-poc
+npm install
+sudo npm install -g -y bower
+bower install | xargs echo
+sudo npm install -g -y grunt-cli
+grunt build
+

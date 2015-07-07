@@ -25,7 +25,7 @@ sudo update-rc.d elasticsearch defaults 95 10
 
 # Import data to Elasticsearch
 sudo apt-get remove node
-sudo apt-get install nodejs
+sudo apt-get install -y nodejs
 sudo ln -s /usr/bin/nodejs /usr/sbin/node
 npm install -g elasticsearch-tools
 es-import-bulk --url http://localhost:9200 --file cloudify_events.json
@@ -45,5 +45,10 @@ sudo update-rc.d kibana4 defaults 96 9
 sudo service kibana4 start
 
 # Install Nginx
-sudo apt-get install nginx apache2-utils
+sudo apt-get install -y nginx apache2-utils
+sudo mv default /etc/nginx/sites-available
 sudo service nginx restart
+
+# Install Cloudify UI
+git clone https://github.com/cloudify-cosmo/cloudify-ui.git
+git checkout CFY-2938-kibana-poc

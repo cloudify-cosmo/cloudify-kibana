@@ -1,0 +1,12 @@
+server {
+        listen 80;
+
+        index index.html index.htm;
+
+        server_name $hostname;
+
+        location / {
+                autoindex off;
+                root /home/ubuntu/cloudify_ui/app;
+        }
+}

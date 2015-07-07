@@ -7,6 +7,7 @@
 # 2. Exported cloudify_storage index data in cloudify_storage.json file, using elasticsearch-tools node module
 # 3. Exported cloudify_events index mapping in cloudify_events.mapping file, using elasticsearch-tools node module
 # 4. Exported cloudify_storage index mapping in cloudify_storage.mapping file, using elasticsearch-tools node module
+# 5. Machine should allow inbound TCP 80 & 5601 ports
 
 # Install Java 8
 sudo add-apt-repository -y ppa:webupd8team/java

@@ -8,10 +8,12 @@
 # 3. Exported cloudify_events index mapping in cloudify_events.mapping file, using elasticsearch-tools node module
 # 4. Exported cloudify_storage index mapping in cloudify_storage.mapping file, using elasticsearch-tools node module
 # 5. Machine should allow inbound TCP 80 & 5601 ports
+# 6. Git credentials cached
 
 # Fixing Node installation
 sudo apt-get remove node
 sudo apt-get install -y nodejs
+sudo apt-get update
 sudo apt-get install -y npm
 sudo ln -s /usr/bin/nodejs /usr/sbin/node
 
@@ -62,4 +64,3 @@ sudo npm install -g -y bower
 bower install | xargs echo
 sudo npm install -g -y grunt-cli
 grunt build
-

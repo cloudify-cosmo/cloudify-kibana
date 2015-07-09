@@ -52,7 +52,7 @@ sudo update-rc.d kibana4 defaults 96 9
 sudo service kibana4 start
 
 # Update Kibana CSS
-sudo mv cloudify.kibana.main.css /opt/kibana/src/public/styles/main.css
+sudo mv ~/cloudify-kibana/cloudify.kibana.main.css /opt/kibana/src/public/styles/main.css
 
 # Install Nginx
 cd ~/cloudify-kibana

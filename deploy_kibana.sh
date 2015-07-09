@@ -35,8 +35,8 @@ sudo update-rc.d elasticsearch defaults 95 10
 
 # Import data to Elasticsearch
 sudo npm install -g elasticsearch-tools
-es-import-bulk --url http://localhost:9200 --file cloudify_events.json
-es-import-bulk --url http://localhost:9200 --file cloudify_storage.json
+es-import-bulk --url http://localhost:9200 --file ~/cloudify_events.json
+es-import-bulk --url http://localhost:9200 --file ~/cloudify_storage.json
 es-import-mappings --url http://localhost:9200 --file ~/cloudify_events.mapping
 es-import-mappings --url http://localhost:9200 --file ~/cloudify_storage.mapping
 

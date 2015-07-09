@@ -44,7 +44,6 @@ es-import-mappings --url http://localhost:9200 --file ~/cloudify_storage.mapping
 wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz
 tar xvf kibana-*.tar.gz
 mv kibana.yml ./kibana-4*/config
-mv cloudify.kibana.main.css ./kibana-4*/public/styles/main.css
 sudo mkdir -p /opt/kibana
 sudo cp -R ./kibana-4*/* /opt/kibana/
 cd /etc/init.d && sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4
@@ -69,3 +68,6 @@ sudo npm install -g -y bower
 bower install | xargs echo
 sudo npm install -g -y grunt-cli
 grunt build
+
+# Update Kibana CSS
+sudo mv cloudify.kibana.main.css /opt/kibana-4*/public/styles/main.css

@@ -70,4 +70,4 @@ sudo npm install -g -y grunt-cli
 grunt build
 
 # Update Kibana CSS
-sudo mv cloudify.kibana.main.css /opt/kibana-4*/public/styles/main.css
+sudo mv cloudify.kibana.main.css /opt/kibana/src/public/styles/main.css

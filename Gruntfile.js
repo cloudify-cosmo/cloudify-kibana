@@ -5,7 +5,18 @@ module.exports = function(grunt){
     require('load-grunt-tasks')(grunt);
 
 
-    var KIBANA_HOME='kibana/release/kibana-4.1.1-linux-x64';
+    var config = { kibanaHome: 'kibana/release/kibana-4.1.1' };
+    if ( /darwin/.test(process.platform)) {
+        config.kibanaUrl = 'https://www.dropbox.com/s/w0abtf9ko6p9vvk/kibana-4.1.1-darwin-x64.zip?dl=1';
+    }
+
+    else if ( /linux/.test(process.platform)){
+        config.kibanaUrl = 'https://www.dropbox.com/s/wfdsumjlr5oeyzk/kibana-4.1.1-linux-x64.zip?dl=1';
+    }else{
+        grunt.log.error('platform unsupported!!');
+        process.exit(1);
+    }
+
 
     grunt.initConfig({
 
@@ -28,19 +39,26 @@ module.exports = function(grunt){
                 src : 'kibana/archive.zip'
             }
         },
+
+        rename: {
+            kibana: {
+                src: 'kibana/release/kibana-4.1.1-' + process.platform + '-' + process.arch,
+                dest: 'kibana/release/kibana-4.1.1'
+            }
+        },
         chmod: {
             kibana: {
                 options: {
                     mode: '755'
                 },
                 // Target-specific file/dir lists and/or options go here.
-                src: [ KIBANA_HOME + '/bin/kibana', KIBANA_HOME + '/node/bin/*', '.tmp/' + KIBANA_HOME + '/bin/kibana', '.tmp/' + KIBANA_HOME + '/node/bin/*']
+                src: [config.kibanaHome + '/bin/kibana', config.kibanaHome + '/node/bin/*', '.tmp/' + config.kibanaHome + '/bin/kibana', '.tmp/' + config.kibanaHome + '/node/bin/*']
             }
         },
         wget:{
             kibana: { // grunt connect:kibana:keepalive
                 files: {
-                    'kibana/archive.zip' : 'https://www.dropbox.com/s/wfdsumjlr5oeyzk/kibana-4.1.1-linux-x64.zip?dl=1'
+                    'kibana/archive.zip' : config.kibanaUrl
                 }
             }
         },
@@ -69,7 +87,7 @@ module.exports = function(grunt){
             },
             dist: {
                 files: {
-                    '.tmp/kibana/release/kibana-4.1.1-linux-x64/src/public/styles/cloudify.css': 'app/styles/main.scss'
+                    '.tmp/kibana/release/kibana-4.1.1/src/public/styles/cloudify.css': 'app/styles/main.scss'
                 }
             }
         },
@@ -81,15 +99,15 @@ module.exports = function(grunt){
             kibana: {
                 files: [
                     // includes files within path
-                    {expand: true, src: ['kibana/release/kibana-4.1.1-linux-x64/**/*'], dest: '.tmp/','mode': true}
+                    {expand: true, src: ['kibana/release/kibana-4.1.1/**/*'], dest: '.tmp/','mode': true}
                 ]
             },
             kibanaIndex: { // copy index since index is overriden by 'insert' we want to be able to roll back only that
-                    files: [{expand: true, src: ['kibana/release/kibana-4.1.1-linux-x64/**/index.html'], dest: '.tmp/'}]
+                    files: [{expand: true, src: ['kibana/release/kibana-4.1.1/**/index.html'], dest: '.tmp/'}]
             },
             dist: {
                 files: [
-                    {expand:true, cwd:'.tmp/kibana/release/kibana-4.1.1-linux-x64', src:['**'], dest:'dist/kibana'},
+                    {expand:true, cwd:'.tmp/kibana/release/kibana-4.1.1', src:['**'], dest:'dist/kibana'},
                     {src:['package.json'], dest:'dist/package.json'}
                 ]
             },
@@ -131,7 +149,7 @@ module.exports = function(grunt){
             options: {},
             kibanaIndex: {
                 src: 'src/html_changes/cloudify_css_index_header.html',
-                dest: '.tmp/kibana/release/kibana-4.1.1-linux-x64/src/public/index.html',
+                dest: '.tmp/kibana/release/kibana-4.1.1/src/public/index.html',
                 match:new RegExp('(<link rel="stylesheet" href="styles/main.css\\?_b=[0-9]+">)')
             }
         },
@@ -189,7 +207,7 @@ module.exports = function(grunt){
             var spawn = require('child_process').spawn;
             var path = require('path');
 
-            var kibanaBin = path.join(__dirname, root + '/release/kibana-4.1.1-linux-x64/bin/kibana');
+            var kibanaBin = path.join(__dirname, root + '/release/kibana-4.1.1/bin/kibana');
 
             grunt.log.ok('running kibana', kibanaBin);
             var server = spawn(kibanaBin);
@@ -229,11 +247,9 @@ module.exports = function(grunt){
     });
 
 
-
     grunt.registerTask('kibanaServer', [ 'runKibanaServer','open:kibana','keepalive']);
 
-
-    grunt.registerTask('setupKibana', [ 'wget:kibana', 'unzip:kibana', 'chmod:kibana' ]);
+    grunt.registerTask('setupKibana', [ 'wget:kibana', 'unzip:kibana', 'rename:kibana','chmod:kibana' ]);
 
     grunt.registerTask('default',[ 'jshint' ]);
 };

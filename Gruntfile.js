@@ -86,9 +86,30 @@ module.exports = function(grunt){
             },
             kibanaIndex: { // copy index since index is overriden by 'insert' we want to be able to roll back only that
                     files: [{expand: true, src: ['kibana/release/kibana-4.1.1-linux-x64/**/index.html'], dest: '.tmp/'}]
+            },
+            dist: {
+                files: [
+                    {expand:true, cwd:'.tmp/kibana/release/kibana-4.1.1-linux-x64', src:['**'], dest:'dist/kibana'},
+                    {src:['package.json'], dest:'dist/package.json'}
+                ]
+            },
+            artifacts: {
+                files: [
+                    {expand:true, cwd: 'dist', 'src' : ['*.tgz'], dest: 'artifacts'}
+                ]
             }
         },
 
+        shell: {
+            npmPack: {
+                command: 'npm pack',
+                options: {
+                    execOptions: {
+                        cwd: 'dist'
+                    }
+                }
+            }
+        },
 
         clean: {
             all: {
@@ -113,14 +134,44 @@ module.exports = function(grunt){
                 dest: '.tmp/kibana/release/kibana-4.1.1-linux-x64/src/public/index.html',
                 match:new RegExp('(<link rel="stylesheet" href="styles/main.css\\?_b=[0-9]+">)')
             }
+        },
+        aws_s3: {
+            options: {
+                accessKeyId: '<%= aws.accessKey %>', // Use the variables
+                secretAccessKey: '<%= aws.secretKey %>', // You can also use env variables
+                region: '<%= aws.region %>',
+                access: 'public-read',
+                uploadConcurrency: 5, // 5 simultaneous uploads
+                downloadConcurrency: 5 // 5 simultaneous downloads
+            },
+            uploadArtifacts: {
+                options: {
+                    bucket: '<%= aws.bucket %>'
+                },
+                files: [
+                    {dest: '<%= aws.folder %>', cwd: './artifacts' , expand:true, src:['**'],action: 'upload'}
+                ]
+            }
         }
     });
+
+    grunt.registerTask('readS3Keys', function(){
+        var s3KeysFile = process.env.AWS_JSON || './dev/aws-keys.json';
+        grunt.log.ok('reading s3 keys from [' + s3KeysFile  + ']' );
+        grunt.config.data.aws =  grunt.file.readJSON( s3KeysFile ); // Read the file
+    });
+
+    grunt.registerTask('pack', ['build', 'shell:npmPack']);
+
+    grunt.registerTask('uploadArtifacts', [ 'readS3Keys','aws_s3:uploadArtifacts']);
+
+    grunt.registerTask('buildAndUpload', ['pack','uploadArtifacts']);
 
     grunt.registerTask('server', ['newer:copy:kibana','copy:kibanaIndex', 'chmod:kibana','insert:kibanaIndex', 'sass','open:kibana', 'runKibanaServer', 'watch:sass']);
 
 
     grunt.registerTask('build', [
-        'newer:copy:kibana','copy:kibanaIndex', 'insert:kibanaIndex', 'sass'
+        'newer:copy:kibana','copy:kibanaIndex', 'insert:kibanaIndex', 'sass', 'copy:dist'
     ]);
 
     grunt.registerTask('serve', ['server']);

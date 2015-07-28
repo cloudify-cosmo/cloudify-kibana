@@ -10,4 +10,4 @@
 
 # Set both 'bind_host' and 'publish_host':
 #
-network.host: localhost
+network.host: 0.0.0.0

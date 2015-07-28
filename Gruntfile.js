@@ -249,7 +249,7 @@ module.exports = function(grunt){
 
     grunt.registerTask('kibanaServer', [ 'runKibanaServer','open:kibana','keepalive']);
 
-    grunt.registerTask('setupKibana', [ 'wget:kibana', 'unzip:kibana', 'rename:kibana','chmod:kibana' ]);
+    grunt.registerTask('setupKibana', [ 'clean:kibana','wget:kibana', 'unzip:kibana', 'rename:kibana','chmod:kibana' ]);
 
     grunt.registerTask('default',[ 'jshint' ]);
 };

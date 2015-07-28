@@ -1,7 +1,7 @@
 
 
 
-export AWS_JSON="../../../build_config/aws-keys.json"
+export AWS_JSON="`pwd`/../../../build_config/aws-keys.json"
 
 cd ../..
 npm install

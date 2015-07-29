@@ -28,12 +28,6 @@ module.exports = function(grunt){
             all: [ 'Gruntfile.js' ]
         },
         unzip: {
-
-            // issues with file permissions after unzip
-            // https://github.com/twolfson/grunt-zip/issues/37
-            // https://github.com/EvanOxfeld/node-unzip/issues/6
-            // since it is originated in node and not in the grunt plugin, there's no currect clean solution, so we chmod manually
-
             kibana: {
                 dest: 'kibana/release/',
                 src : 'kibana/archive.zip'
@@ -52,7 +46,7 @@ module.exports = function(grunt){
                     mode: '755'
                 },
                 // Target-specific file/dir lists and/or options go here.
-                src: [config.kibanaHome + '/bin/kibana', config.kibanaHome + '/node/bin/*', '.tmp/' + config.kibanaHome + '/bin/kibana', '.tmp/' + config.kibanaHome + '/node/bin/*']
+                src: [ '.tmp/' + config.kibanaHome + '/bin/kibana', '.tmp/' + config.kibanaHome + '/node/bin/*']
             }
         },
         wget:{
@@ -249,7 +243,7 @@ module.exports = function(grunt){
 
     grunt.registerTask('kibanaServer', [ 'runKibanaServer','open:kibana','keepalive']);
 
-    grunt.registerTask('setupKibana', [ 'wget:kibana', 'unzip:kibana', 'rename:kibana','chmod:kibana' ]);
+    grunt.registerTask('setupKibana', [ 'wget:kibana', 'unzip:kibana', 'rename:kibana' ]);
 
     grunt.registerTask('default',[ 'jshint' ]);
 };

@@ -129,6 +129,9 @@ module.exports = function(grunt){
             },
             kibana : {
                 src: ['kibana','.tmp/kibana']
+            },
+            artifacts: {
+                src: ['artifacts','dist/cloudify-kibana*.tgz']
             }
         },
 
@@ -173,7 +176,7 @@ module.exports = function(grunt){
         grunt.config.data.aws =  grunt.file.readJSON( s3KeysFile ); // Read the file
     });
 
-    grunt.registerTask('pack', ['build', 'shell:npmPack']);
+    grunt.registerTask('pack', [ 'clean:artifacts','build', 'shell:npmPack','copy:artifacts']);
 
     grunt.registerTask('uploadArtifacts', [ 'readS3Keys','aws_s3:uploadArtifacts']);
 
@@ -183,7 +186,7 @@ module.exports = function(grunt){
 
 
     grunt.registerTask('build', [
-        'newer:copy:kibana','copy:kibanaIndex', 'insert:kibanaIndex', 'sass', 'copy:dist'
+        'clean:all','newer:copy:kibana','copy:kibanaIndex', 'insert:kibanaIndex', 'sass', 'copy:dist'
     ]);
 
     grunt.registerTask('serve', ['server']);
@@ -243,7 +246,7 @@ module.exports = function(grunt){
 
     grunt.registerTask('kibanaServer', [ 'runKibanaServer','open:kibana','keepalive']);
 
-    grunt.registerTask('setupKibana', [ 'wget:kibana', 'unzip:kibana', 'rename:kibana' ]);
+    grunt.registerTask('setupKibana', [ 'clean:kibana','wget:kibana', 'unzip:kibana', 'rename:kibana' ]);
 
     grunt.registerTask('default',[ 'jshint' ]);
 };

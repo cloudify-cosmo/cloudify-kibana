@@ -4,7 +4,6 @@ module.exports = function(grunt){
 
     require('load-grunt-tasks')(grunt);
 
-
     var config = { kibanaHome: 'kibana/release/kibana-4.1.1' };
     if ( /darwin/.test(process.platform)) {
         config.kibanaUrl = 'https://www.dropbox.com/s/w0abtf9ko6p9vvk/kibana-4.1.1-darwin-x64.zip?dl=1';
@@ -185,7 +184,7 @@ module.exports = function(grunt){
 
     grunt.registerTask('buildAndUpload', ['pack','uploadArtifacts']);
 
-    grunt.registerTask('server', ['newer:copy:kibana','copy:kibanaIndex', 'chmod:kibana','insert:kibanaIndex', 'sass','open:kibana', 'runKibanaServer', 'watch:sass']);
+    grunt.registerTask('server', ['newer:copy:kibana','copy:kibanaIndex', 'chmod:kibana','insert:kibanaIndex', 'sass','open:kibana', 'runKibanaServer','runKibanaProxy', 'watch:sass']);
 
 
     grunt.registerTask('build', [
@@ -194,58 +193,73 @@ module.exports = function(grunt){
 
     grunt.registerTask('serve', ['server']);
 
-    // runs the kibana server
-    grunt.registerTask('runKibanaServer', function ( target ) {
-
-        try {
-            var root = '.tmp/kibana';
-
-            if (target === 'orig') {
-                root = 'kibana';
-            }
-
+    //runs the kibana-proxy
+    grunt.registerTask('runKibanaProxy', function(){
+        try{
             var spawn = require('child_process').spawn;
-            var path = require('path');
+            var kibanaProxyBin = __dirname+'/proxy/proxy.js';
+            grunt.log.ok('running kibana-proxy', kibanaProxyBin);
+            var server = spawn('node',[kibanaProxyBin]);
 
-            var kibanaBin = path.join(__dirname, root + '/release/kibana-4.1.1/bin/kibana');
-
-            grunt.log.ok('running kibana', kibanaBin);
-            var server = spawn(kibanaBin);
-            var opened = false;
             server.stdout.on('data', function (data) {
-                console.log(data.toString());
-                if (data.toString().indexOf('Listening on 0.0.0.0:5601') >= 0) {
-                    if (!opened) {
-                        opened = true;
-                        console.log('server is listening');
-                        grunt.event.emit('serverListening'); // triggers open:delayed
-                    }
-                }
-
-                if ( data.toString().indexOf('Unable to connect to elasticsearch') >= 0){
-                    grunt.log.error('elasticsearch is down!');
-                }
-
-
-                //grunt.event.emit('serverListening'); // triggers open:delayed
-            });
-            server.stderr.on('data', function (data) {
-                console.log(data.toString());
-
+                grunt.log.ok("Kibana-proxy is "+data.toString());
+                grunt.event.emit('kibanaProxyListening'); // triggers open:delayed
             });
 
-
-            process.on('exit', function () {
-                grunt.log.writeln('killing myserver...');
-                server.kill();
-                grunt.log.writeln('killed myserver');
+            server.stderr.on('data', function(data){
+                grunt.log.error(data.toString());
             });
+
         }catch(e){
-            grunt.log.error('unable to run kibana server',e);
+            grunt.log.error('unable to run kibana-proxy',e);
         }
-
     });
 
+    // runs the kibana server
+    grunt.registerTask('runKibanaServer', function ( target ) {
+        grunt.event.on('kibanaProxyListening',function(){
+            try {
+                var root = '.tmp/kibana';
+
+                if (target === 'orig') {
+                    root = 'kibana';
+                }
+
+                var spawn = require('child_process').spawn;
+                var path = require('path');
+
+                var kibanaBin = path.join(__dirname, root + '/release/kibana-4.1.1/bin/kibana');
+
+                grunt.log.ok('running kibana', kibanaBin);
+                var server = spawn(kibanaBin);
+                var opened = false;
+                server.stdout.on('data', function (data) {
+                    console.log(data.toString());
+                    if (data.toString().indexOf('Listening on 0.0.0.0:5601') >= 0) {
+                        if (!opened) {
+                            opened = true;
+                            grunt.log.ok('Kibana is Listening on 0.0.0.0:5601');
+                            grunt.event.emit('serverListening'); // triggers open:delayed
+                        }
+                    }
+
+                    if ( data.toString().indexOf('Unable to connect to elasticsearch') >= 0){
+                        grunt.log.error('elasticsearch is down!');
+                    }
+
+
+                    //grunt.event.emit('serverListening'); // triggers open:delayed
+                });
+                server.stderr.on('data', function (data) {
+                    grunt.log.error(data.toString());
+
+                });
+            }catch(e){
+                grunt.log.error('unable to run kibana server',e);
+            }
+        })
+
+    });
 
     grunt.registerTask('kibanaServer', [ 'runKibanaServer','open:kibana','keepalive']);
 

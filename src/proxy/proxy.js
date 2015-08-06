@@ -1,6 +1,6 @@
 var express = require('express');
-var kibana = require('./kibana');
-var conf = require('./conf.json');
+var kibana = require('./routes/kibana');
+var conf = require('./config/conf.json');
 
 var app = express();
 var router = express.Router();

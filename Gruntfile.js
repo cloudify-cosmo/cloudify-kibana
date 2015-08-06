@@ -98,7 +98,8 @@ module.exports = function(grunt){
             kibana: {
                 files: [
                     // includes files within path
-                    {expand: true, src: ['kibana/release/kibana-4.1.1/**/*'], dest: '.tmp/','mode': true}
+                    {expand: true, src: ['kibana/release/kibana-4.1.1/**/*'], dest: '.tmp/','mode': true},
+                    {expand: true, src: ['proxy/**/*','run.sh'], cwd: 'src', dest: '.tmp/kibana/', mode: true }
                 ]
             },
             kibanaIndex: { // copy index since index is overriden by 'insert' we want to be able to roll back only that
@@ -197,7 +198,7 @@ module.exports = function(grunt){
     grunt.registerTask('runKibanaProxy', function(){
         try{
             var spawn = require('child_process').spawn;
-            var kibanaProxyBin = __dirname+'/proxy/proxy.js';
+            var kibanaProxyBin = __dirname+'/src/proxy/proxy.js';
             grunt.log.ok('running kibana-proxy', kibanaProxyBin);
             var server = spawn('node',[kibanaProxyBin]);
 

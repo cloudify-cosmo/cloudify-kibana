@@ -9,7 +9,7 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
     req.on('data',function(chunk){
         var stuffIWant = '['+req.method+'] '+'Url: '+fullUrl+" Body: "+chunk+"\n";
         console.log(stuffIWant);
-        fs.appendFile("/Users/Eden/dev_env/projects_git/cloudify-kibana/listener/test", stuffIWant, function(err) {
+        fs.appendFile("listener/test", stuffIWant, function(err) {
             if(err) {
                 console.log(err);
             }

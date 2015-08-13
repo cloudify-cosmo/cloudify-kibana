@@ -1,5 +1,5 @@
 Overview:
-------------
+=========
 This is a project we have started currently stopped, integrating Kibana with the Cloudify UI.
 ”Kibana is an open source data visualization platform that allows you to interact with your data through stunning, powerful graphics.”
 
@@ -11,9 +11,9 @@ NOTE: Kibana requires Elasticsearch version to be at least 1.4.4
 
 
 
-# useful commands in elasticsearch
+## useful commands in elasticsearch
 
-## list all indexes 
+### list all indexes 
 
 https://www.elastic.co/guide/en/elasticsearch/reference/1.3/_list_all_indexes.html
 
@@ -21,15 +21,15 @@ https://www.elastic.co/guide/en/elasticsearch/reference/1.3/_list_all_indexes.ht
 `curl 'localhost:9200/_cat/indices?v'`
 
 
-## How to export/import elasticsearch data
+### How to export/import elasticsearch data
 
 you can use https://github.com/taskrabbit/elasticsearch-dump
 
-### install 
+#### install 
 
 `npm install elasticdump -g`
 
-### export
+#### export
 
 
 ```
@@ -48,6 +48,7 @@ elasticdump --bulk=true  --input=dump.json   --output=http://localhost:9200/
 ```
 
 ___
+
 
 ###Cloudify-Kibana repo
 The repository: https://github.com/cloudify-cosmo/cloudify-kibana

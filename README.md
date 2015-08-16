@@ -96,7 +96,7 @@ The matching manager simple blueprint:
 https://github.com/cloudify-cosmo/cloudify-manager-blueprints/tree/CFY-2980-simple-boostrap-kibana-as-part-of-ui
 
 ```
-NOTE: this manager runs on Centos7 image.
+NOTE: this manager runs on Centos7 image, and blueprint's nginx configuration was not tested on openstack. 
 ```
 
 ###Kibana security + alias
